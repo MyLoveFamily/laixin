@@ -107,10 +107,6 @@ p{word-wrap:break-word}
 
 }
 .trblBor:after {
-    -webkit-transform: scale(0.5);
-    -ms-transform: scale(0.5);
-    -o-transform: scale(0.5);
-    transform: scale(0.5);
     position: absolute;
     content: "";
     top: 0;
@@ -164,10 +160,12 @@ p{word-wrap:break-word}
 }
 
 .imgItem{
-    flex-basis: 33.33%;
-    margin: 2px;
-    height: 90px;
-    width: 90px;
+  line-height: 0;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+  width: 33%;
+  margin: 0 1.5px 0 0;
 }
 .downloadApp {
     position: fixed;
