@@ -14,7 +14,9 @@ require('./app.less');
             imgUrl:'',
             description:'',
             fouceStauts:'',
-            maxIndex:'-1'
+            maxIndex:'-1',
+            foucebool:'',
+            query:{}
         };
     }
     _setState=(articleList)=>{
@@ -35,14 +37,15 @@ require('./app.less');
         this.setState({title:title,imgUrl:imgUrl,description:description});
     }
     _setStatus=()=>{
-        this.setState({fouceStauts:'已关注'})
+        this.setState({fouceStauts:'已关注',foucebool:'cancel'})
     }
-     _setStatusHavent=()=>{
-         this.setState({fouceStauts:'关注'})
-     }
+    _setStatusHavent=()=>{
+        this.setState({fouceStauts:'关注',foucebool:'add'})
+    }
     //加载数据
     initData=()=>{
-        let url =  'http://just.baidu.com/restapi/public/articlelist?version=1.0&topicid=2523888542';
+        let url =  'http://bae@nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=';
+        url+=this.state.query.topicid;
         let setState = this._setState.bind(this);
         if(this.state.maxIndex!=='-1') {
             url += '&index=' + this.state.maxIndex;
@@ -63,88 +66,100 @@ require('./app.less');
             }
         });
     }
-     initHeader=()=>{
-         let url = 'http://just.baidu.com/restapi/public/topicmeta?topicid=2523888542&version=1.0';
-         let setInfo = this._setInfo.bind(this);
-         this.serverRequestHeader = $.ajax({
-             type: "GET",
-             url: url,
-             dataType: "jsonp",
-             success : function(data){
-                 // console.log(data);
-                 if(data.response_params.topic_list.length > 0){
-                     var title = data.response_params.topic_list[0].title;
-                     var imgUrl = data.response_params.topic_list[0].logo.small;
-                     var description = data.response_params.topic_list[0].description;
-                     setInfo(title,imgUrl,description);
-                 }
+    initHeader=()=>{
+        let url = 'http://just.baidu.com/restapi/public/topicmeta?version=1.0&topicid=';
+        url+=this.state.query.topicid;
+        let setInfo = this._setInfo.bind(this);
+        this.serverRequestHeader = $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "jsonp",
+            success : function(data){
+                // console.log(data);
+                if(data.response_params.topic_list.length > 0){
+                    var title = data.response_params.topic_list[0].title;
+                    var imgUrl = data.response_params.topic_list[0].logo.small;
+                    var description = data.response_params.topic_list[0].description;
+                    setInfo(title,imgUrl,description);
+                }
 
-             }
-         })
-     }
-     getfouusStatus = ()=>{
-         let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/get?type=stock&sfrom=sbox&third_id=1270014357';
-         let setStatus = this._setStatus.bind(this);
-         let setStatusHavent = this._setStatusHavent.bind(this);
-         this.serverRequestHeader = $.ajax({
-             type: "GET",
-             url: url,
-             dataType: "jsonp",
-             success : function(data){
-                 JSON.stringify(data);
-                 if(data.data.items.length > 0){
+            }
+        })
+    }
+    getfouusStatus = ()=>{
+        let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/get?type=card&sfrom=sbox&third_id=6000&op_type=add';
+        let setStatus = this._setStatus.bind(this);
+        let setStatusHavent = this._setStatusHavent.bind(this);
+        this.serverRequestHeader = $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "jsonp",
+            success : function(data){
+                JSON.stringify(data);
+                if(data.data.items.length > 0){
                     setStatus();
-                     console.log('已关注');
-                 }
-                 else {
-                     setStatusHavent();
-                     console.log('未关注');
-                 }
+                    console.log('已关注');
+                }
+                else {
+                    setStatusHavent();
+                    console.log('未关注');
+                }
 
-             }
-         })
-     }
-     focusTopicForIos=()=>{
-         console.log('11111111ios');
-     }
-     focusTopicForAndroid=()=>{
-         console.log('11111111android');
-     }
-     focusTopic=()=>{
-         let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/receive?type=stock&third_id=stock_US_HEES&op_type=add&sfrom=sbox';
-         let setStatus = this._setStatus.bind(this);
-         let setStatusHavent = this._setStatusHavent.bind(this);
-         this.serverRequestHeader = $.ajax({
-             type: "GET",
-             url: url,
-             dataType: "jsonp",
-             success : function(data){
-                 JSON.stringify(data);
-                 if(data.data.length == 0){
-                     setStatus();
-                     console.log('已关注变成了未关注');
-                 }
-                 else {
-                     setStatusHavent();
-                     console.log('未关注变成了已关注');
-                 }
+            }
+        })
+    }
+    focusTopicForIos=()=>{
+        console.log('11111111ios');
+    }
+    focusTopicForAndroid=()=>{
+        console.log('11111111android');
+    }
+    focusTopic=()=>{
+        let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/receive?type=card&sfrom=sbox&third_id=6000';
+        let setStatus = this._setStatus.bind(this);
+        let setStatusHavent = this._setStatusHavent.bind(this);
+        this.serverRequestHeader = $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "jsonp",
+            success : function(data){
+                JSON.stringify(data);
+                if(data.errno == 0){
+                    setStatusHavent();
+                    console.log('未关注变成了已关注');
+                }
+                else {
+                    setStatus();
+                    console.log('已关注变成了未关注');
+                }
 
-             }
-         })
-     }
-     //添加滚动监听事件
-     bindScrollListener = () =>{
-         let initData = this.initData.bind(this);
-         $(window).scroll(function(){
-             var scrollTop = $(this).scrollTop();
-             var scrollHeight = $(document).height();
-             var windowHeight = $(this).height();
-             if(scrollTop + windowHeight == scrollHeight){
-                 initData();
-             }
-         });
-     }
+            }
+        })
+    }
+    //添加滚动监听事件
+    bindScrollListener = () =>{
+        let initData = this.initData.bind(this);
+        $(window).scroll(function(){
+            var scrollTop = $(this).scrollTop();
+            var scrollHeight = $(document).height();
+            var windowHeight = $(this).height();
+            if(scrollTop + windowHeight == scrollHeight){
+                initData();
+            }
+        });
+    }
+    getUrlParm = () =>{
+        var queryArr = location.search.substring(1).split("&");
+        let query = this.state.query;
+        queryArr.map(function (item){
+            item = item.split('=');
+            query[item[0]] = item[1];
+        });
+        console.log('parm='+JSON.stringify(query));
+        this.setState({query: query});
+    }
     componentDidMount = () => {
+        this.getUrlParm();
         this.initData();
         this.initHeader();
         this.getfouusStatus();
@@ -155,25 +170,26 @@ require('./app.less');
         this.serverRequestHeader.abort();
     }
 
-  render() {
-      let articleList = this.state.articleList;
-      let title = this.state.title;
-      let imgUrl = this.state.imgUrl;
-      let description = this.state.description;
-      let fouceStauts = this.state.fouceStauts;
-      let rows = articleList.map(function (item) {
-          let len = item.abstract.image.length;
-          if (len <= 1) {//一张图片的情况
-             return(
-                  <OneItem itemData={item} key={item.id}></OneItem>
-              );
-          }
-          else if (len >= 2) {//2张及以上图片的情况
-              return(
-                  <ThreeItem itemData={item} key={item.id}></ThreeItem>
-              );
-          }
-      });
+    render() {
+        let articleList = this.state.articleList;
+        let title = this.state.title;
+        let imgUrl = this.state.imgUrl;
+        let description = this.state.description;
+        let fouceStauts = this.state.fouceStauts;
+        let focusTopic = this.focusTopic();
+        let rows = articleList.map(function (item) {
+            let len = item.abstract.image.length;
+            if (len <= 1) {//一张图片的情况
+                return(
+                    <OneItem itemData={item} key={item.id}></OneItem>
+                );
+            }
+            else if (len >= 2) {//2张及以上图片的情况
+                return(
+                    <ThreeItem itemData={item} key={item.id}></ThreeItem>
+                );
+            }
+        });
 
     return (
       <div>
