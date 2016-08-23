@@ -13,11 +13,22 @@ require('./app.less');
             title: '',
             imgUrl:'',
             description:'',
-            fouceStauts:''
+            fouceStauts:'',
+            maxIndex:'-1'
         };
     }
     _setState=(articleList)=>{
-        this.setState({ articleList: articleList});
+        if(articleList&&articleList.length>0) {
+            let preArticleList = this.state.articleList;
+            let maxIndex = this.state.maxIndex;
+            for (let item of articleList) {
+                maxIndex = item.index;
+                preArticleList.push(item);
+            }
+            console.log('maxIndex=' + maxIndex);
+            this.setState({maxIndex: maxIndex});
+            this.setState({articleList: preArticleList});
+        }
     }
     //TODO 通用设置传参数 传参顺序无关
     _setInfo=(title,imgUrl,description)=>{
@@ -33,7 +44,10 @@ require('./app.less');
     initData=()=>{
         let url =  'http://just.baidu.com/restapi/public/articlelist?version=1.0&topicid=2523888542';
         let setState = this._setState.bind(this);
-
+        if(this.state.maxIndex!=='-1') {
+            url += '&index=' + this.state.maxIndex;
+        }
+        console.log(url);
         this.serverRequest = $.ajax({
             type: "GET",
             url: url,
@@ -61,12 +75,8 @@ require('./app.less');
                  if(data.response_params.topic_list.length > 0){
                      var title = data.response_params.topic_list[0].title;
                      var imgUrl = data.response_params.topic_list[0].logo.small;
-                    // var subscribe = data.response_params.topic_list[0].subscribe + '人关注';
                      var description = data.response_params.topic_list[0].description;
                      setInfo(title,imgUrl,description);
-                     //$('#topTitle').html(title);
-                     //$('#topicImg').attr('src',imgUrl);
-                    // $('#fansPeople').text(subscribe);
                  }
 
              }
@@ -122,10 +132,23 @@ require('./app.less');
              }
          })
      }
+     //添加滚动监听事件
+     bindScrollListener = () =>{
+         let initData = this.initData.bind(this);
+         $(window).scroll(function(){
+             var scrollTop = $(this).scrollTop();
+             var scrollHeight = $(document).height();
+             var windowHeight = $(this).height();
+             if(scrollTop + windowHeight == scrollHeight){
+                 initData();
+             }
+         });
+     }
     componentDidMount = () => {
         this.initData();
         this.initHeader();
         this.getfouusStatus();
+        this.bindScrollListener();
     }
     componentWillUnmount = () => {
         this.serverRequest.abort();
@@ -133,25 +156,24 @@ require('./app.less');
     }
 
   render() {
-      let rows = [];
       let articleList = this.state.articleList;
       let title = this.state.title;
       let imgUrl = this.state.imgUrl;
       let description = this.state.description;
       let fouceStauts = this.state.fouceStauts;
-      for (let item of articleList) {
+      let rows = articleList.map(function (item) {
           let len = item.abstract.image.length;
-          if(len<=1){//一张图片的情况
-              rows.push(
-                  <OneItem itemData={item}></OneItem>
+          if (len <= 1) {//一张图片的情况
+             return(
+                  <OneItem itemData={item} key={item.id}></OneItem>
               );
           }
-          else if(len>=2){//2张及以上图片的情况
-              rows.push(
-                  <ThreeItem itemData={item}></ThreeItem>
+          else if (len >= 2) {//2张及以上图片的情况
+              return(
+                  <ThreeItem itemData={item} key={item.id}></ThreeItem>
               );
           }
-      }
+      });
 
     return (
       <div>

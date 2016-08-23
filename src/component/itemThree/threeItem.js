@@ -11,7 +11,7 @@ class ThreeItem extends Component {
 
         for(let i=0;i<len&&i<3;i++ ) {
             rows.push(
-                <div className="imgItem">
+                <div className="imgItem" key={itemData.id+'img'+i}>
                     <img src = {imageSrc[i]}/>
                 </div>
             );
