@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import ThreeItem from './component/itemThree/threeItem';
 import OneItem from './component/itemOne/oneItem';
+import NewOne from './component/newOne/newOne';
 import $ from 'jquery';
 import {getBrowserInfo} from './util/util';
 require('./app.less');
 
- class App extends Component {
+class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -44,8 +45,8 @@ require('./app.less');
     }
     //加载数据
     initData=()=>{
-        let url =  'http://bae@nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=';
-        url+=this.state.query.topicid;
+        let url =  'http://bae@nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=4086764444';
+        //url+=this.state.query.topicid;
         let setState = this._setState.bind(this);
         if(this.state.maxIndex!=='-1') {
             url += '&index=' + this.state.maxIndex;
@@ -67,8 +68,8 @@ require('./app.less');
         });
     }
     initHeader=()=>{
-        let url = 'http://just.baidu.com/restapi/public/topicmeta?version=1.0&topicid=';
-        url+=this.state.query.topicid;
+        let url = 'http://just.baidu.com/restapi/public/topicmeta?version=1.0&topicid=4086764444';
+        //url+=this.state.query.topicid;
         let setInfo = this._setInfo.bind(this);
         this.serverRequestHeader = $.ajax({
             type: "GET",
@@ -87,7 +88,7 @@ require('./app.less');
         })
     }
     getfouusStatus = ()=>{
-        let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/get?type=card&sfrom=sbox&third_id=6000&op_type=add';
+        let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/get?type=card&sfrom=sbox&third_id=6000';
         let setStatus = this._setStatus.bind(this);
         let setStatusHavent = this._setStatusHavent.bind(this);
         this.serverRequestHeader = $.ajax({
@@ -108,29 +109,35 @@ require('./app.less');
             }
         })
     }
-    focusTopicForIos=()=>{
-        console.log('11111111ios');
-    }
-    focusTopicForAndroid=()=>{
-        console.log('11111111android');
-    }
+
     focusTopic=()=>{
-        let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/receive?type=card&sfrom=sbox&third_id=6000';
+        let url = 'http://cq01-duwei04.epc.baidu.com:8220/api/subscribe/v1/relation/receive?type=card&sfrom=sbox&third_id=6000&op_type=';
         let setStatus = this._setStatus.bind(this);
         let setStatusHavent = this._setStatusHavent.bind(this);
+        let optType = this.state.foucebool
+        url += optType;
+        console.log(url);
         this.serverRequestHeader = $.ajax({
             type: "GET",
             url: url,
             dataType: "jsonp",
             success : function(data){
-                JSON.stringify(data);
-                if(data.errno == 0){
-                    setStatusHavent();
-                    console.log('未关注变成了已关注');
+                console.log(data);
+                //JSON.stringify(data);
+                console.log(url);
+                if(data.errno === 0){
+                    // console.log(this.state.foucebool);
+                    if(optType == 'add'){
+                        console.log('add');
+                        setStatus()
+                    }
+                    else if(optType == 'cancel'){
+                        console.log('cancel');
+                        setStatusHavent();
+                    }
                 }
                 else {
-                    setStatus();
-                    console.log('已关注变成了未关注');
+                    console.log('点击没返回成功');
                 }
 
             }
@@ -155,6 +162,7 @@ require('./app.less');
             item = item.split('=');
             query[item[0]] = item[1];
         });
+        // JSON.stringify(query);
         console.log('parm='+JSON.stringify(query));
         this.setState({query: query});
     }
@@ -164,6 +172,7 @@ require('./app.less');
         this.initHeader();
         this.getfouusStatus();
         this.bindScrollListener();
+
     }
     componentWillUnmount = () => {
         this.serverRequest.abort();
@@ -176,12 +185,11 @@ require('./app.less');
         let imgUrl = this.state.imgUrl;
         let description = this.state.description;
         let fouceStauts = this.state.fouceStauts;
-        let focusTopic = this.focusTopic();
         let rows = articleList.map(function (item) {
             let len = item.abstract.image.length;
             if (len <= 1) {//一张图片的情况
                 return(
-                    <OneItem itemData={item} key={item.id}></OneItem>
+                    <NewOne itemData={item} key={item.id}></NewOne>
                 );
             }
             else if (len >= 2) {//2张及以上图片的情况
@@ -190,31 +198,30 @@ require('./app.less');
                 );
             }
         });
+        return (
+            <div>
+                <div className="list-head">
+                    <div className="pageHeader">
+                        <div className="imgbg">
+                            <img src={imgUrl} id="topicImg"/>
+                        </div>
+                        <div className="msg">
+                            <div className="fontheader">
+                                <h1 className="title" id="topTitle">{title}</h1>
+                            </div>
+                            <span className="description" id="fansPeople">{description}</span>
+                        </div>
+                        <div className="operation">
+                            <div className="normal follow trblBor" onClick={this.focusTopic}>
+                                {fouceStauts}
+                            </div>
+                        </div>
 
-    return (
-      <div>
-          <div className="list-head">
-              <div className="pageHeader">
-                  <div className="imgbg">
-                      <img src={imgUrl} id="topicImg"/>
-                  </div>
-                  <div className="msg">
-                      <div className="fontheader">
-                          <h1 className="title" id="topTitle">{title}</h1>
-                      </div>
-                      <span className="description" id="fansPeople">{description}</span>
-                  </div>
-                  <div className="operation">
-                      <div className="normal follow trblBor" onClick={this.focusTopic()}>
-                          {fouceStauts}
-                      </div>
-                  </div>
-
-              </div>
-          </div>
-          <div>{rows}</div>
-      </div>
-    )
-  }
+                    </div>
+                </div>
+                <div className="content">{rows}</div>
+            </div>
+        )
+    }
 }
 export default App;

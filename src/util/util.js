@@ -3,9 +3,12 @@ const transferDate = (timestamp) =>{
     newDate.setTime(timestamp * 1000);
     var month = newDate.getMonth()+1;
     var day = newDate.getDate();
+    var hour= newDate.getHours();
+    var minute = newDate.getMinutes();
     var timeStr = month < 10 ? '0'+ month : month;
     timeStr += '-';
     timeStr += day < 10 ? '0'+ day : day;
+    timeStr += " " +  hour + ":" + minute;
     return timeStr;
 }
 const getBrowserInfo = () =>{
@@ -31,4 +34,6 @@ const getBrowserInfo = () =>{
         language:(navigator.browserLanguage || navigator.language).toLowerCase()
     }
 }
+
+
 export {transferDate,getBrowserInfo};

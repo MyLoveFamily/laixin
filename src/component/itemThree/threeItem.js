@@ -26,6 +26,7 @@ class ThreeItem extends Component {
                             {rows}
                         </div>
                         <div className="text-extra">
+                            <div className="comment">{itemData.source}</div>
                             <div className="time">{transferDate(itemData.time)}</div>
                         </div>
                     </div>
