@@ -45,8 +45,8 @@ class App extends Component {
     }
     //加载数据
     initData=()=>{
-        let url =  'http://bae@nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=4086764444';
-        //url+=this.state.query.topicid;
+        let url =  'http://nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=';
+        url+=this.state.query.topicid;
         let setState = this._setState.bind(this);
         if(this.state.maxIndex!=='-1') {
             url += '&index=' + this.state.maxIndex;
@@ -68,8 +68,8 @@ class App extends Component {
         });
     }
     initHeader=()=>{
-        let url = 'http://just.baidu.com/restapi/public/topicmeta?version=1.0&topicid=4086764444';
-        //url+=this.state.query.topicid;
+        let url = 'http://just.baidu.com/restapi/public/topicmeta?version=1.0&topicid=';
+        url+=this.state.query.topicid;
         let setInfo = this._setInfo.bind(this);
         this.serverRequestHeader = $.ajax({
             type: "GET",
