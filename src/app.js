@@ -45,7 +45,8 @@ class App extends Component {
     }
     //加载数据
     initData=()=>{
-        let url =  'http://nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=';
+        let url =  'http://just.baidu.com/restapi/public/articlelist?version=1.0&topicid=2523888542';
+        // let url =  'http://nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=';
         url+=query.topicid;
         let setState = this._setState.bind(this);
         if(this.state.maxIndex!=='-1') {
