@@ -6,6 +6,7 @@ import $ from 'jquery';
 import {getBrowserInfo} from './util/util';
 require('./app.less');
 
+let query ={};
 class App extends Component {
     constructor(props) {
         super(props);
@@ -16,8 +17,7 @@ class App extends Component {
             description:'',
             fouceStauts:'',
             maxIndex:'-1',
-            foucebool:'',
-            query:{}
+            foucebool:''
         };
     }
     _setState=(articleList)=>{
@@ -46,7 +46,7 @@ class App extends Component {
     //加载数据
     initData=()=>{
         let url =  'http://nj02-bccs-rdtest05.nj02.baidu.com:8082/doug/public/articlelist?version=1.0&ischecked=1&topicid=';
-        url+=this.state.query.topicid;
+        url+=query.topicid;
         let setState = this._setState.bind(this);
         if(this.state.maxIndex!=='-1') {
             url += '&index=' + this.state.maxIndex;
@@ -69,7 +69,7 @@ class App extends Component {
     }
     initHeader=()=>{
         let url = 'http://just.baidu.com/restapi/public/topicmeta?version=1.0&topicid=';
-        url+=this.state.query.topicid;
+        url+=query.topicid;
         let setInfo = this._setInfo.bind(this);
         this.serverRequestHeader = $.ajax({
             type: "GET",
@@ -157,14 +157,14 @@ class App extends Component {
     }
     getUrlParm = () =>{
         var queryArr = location.search.substring(1).split("&");
-        let query = this.state.query;
+        let queryObj = query;
         queryArr.map(function (item){
             item = item.split('=');
-            query[item[0]] = item[1];
+            queryObj[item[0]] = item[1];
         });
         // JSON.stringify(query);
-        console.log('parm='+JSON.stringify(query));
-        this.setState({query: query});
+        console.log('parm='+JSON.stringify(queryObj));
+        query = queryObj;
     }
     componentDidMount = () => {
         this.getUrlParm();
