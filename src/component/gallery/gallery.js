@@ -49,9 +49,10 @@ class Gallery extends Component {
 		});
 	}
 	handleClickImage () {
-		if (this.state.currentImage === this.props.images.length - 1) return;
-
-		this.gotoNext();
+		// if (this.state.currentImage === this.props.images.length - 1) return;
+        //
+		// this.gotoNext();
+		this.closeLightbox();
 	}
 	renderGallery () {
 		const { images, userStyle } = this.props;

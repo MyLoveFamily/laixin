@@ -164,18 +164,10 @@ class Lightbox extends Component {
 		if (showThumbnails) {
 			offsetThumbnails = theme.thumbnail.size + theme.container.gutter.vertical;
 		}
-		let hammerOptions = {
-			touchAction:'compute',
-			recognizers: {
-				tap: {
-					time: 600,
-					threshold: 100
-				}
-			}
-		};
+
+
 
 		return (
-			<Hammer direction='UP' options={hammerOptions}>
 			<Container
 				key="open"
 				onClick={!!backdropClosesModal && onClose}
@@ -194,7 +186,6 @@ class Lightbox extends Component {
 				{this.renderArrowNext()}
 				<ScrollLock />
 			</Container>
-			</Hammer>
 		);
 	}
 	renderImages () {
@@ -221,7 +212,14 @@ class Lightbox extends Component {
 
 		const thumbnailsSize = showThumbnails ? theme.thumbnail.size : 0;
 		const heightOffset = `${theme.header.height + theme.footer.height + thumbnailsSize + (theme.container.gutter.vertical)}px`;
-
+		let hammerOptions = {
+			touchAction:'compute',
+			recognizers: {
+				tap: {
+					time: 600,
+					threshold: 100
+				}
+			}};
 		return (
 			<figure className={css(classes.figure)}>
 				{/*
@@ -229,6 +227,7 @@ class Lightbox extends Component {
 					https://fb.me/react-unknown-prop is resolved
 					<Swipeable onSwipedLeft={this.gotoNext} onSwipedRight={this.gotoPrev} />
 				*/}
+				<Hammer direction='UP' options={hammerOptions}>
 				<img
 					className={css(classes.image)}
 					onClick={!!onClickImage && onClickImage}
@@ -240,6 +239,7 @@ class Lightbox extends Component {
 						maxHeight: `calc(100vh - ${heightOffset})`,
 					}}
 				/>
+				</Hammer>
 				<Footer
 					caption={images[currentImage].caption}
 					countCurrent={currentImage + 1}
