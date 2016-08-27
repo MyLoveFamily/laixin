@@ -7,7 +7,10 @@ class OneItem extends Component {
 
     render() {
         let itemData = this.props.itemData;
-        let imgSrc = [{src: itemData.abstract.image[0]}];
+        let imgSrc = [{src: ''}];
+        if(itemData.abstract.image[0]){
+            imgSrc.src = itemData.abstract.image[0];
+        }
         return (
             <li className="cnt-list">
                 <a href="" className="typeNews">

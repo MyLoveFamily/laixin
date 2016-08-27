@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import Lightbox from 'react-images';
+// import Lightbox from 'react-images';
+import Lightbox from '../lightbox/Lightbox';
 require('./gallery.less');
 
 class Gallery extends Component {
@@ -88,6 +89,8 @@ class Gallery extends Component {
 					onClose={this.closeLightbox}
 					showThumbnails={this.props.showThumbnails}
 					theme={this.props.theme}
+					showCloseButton={true}
+					showImageCount={true}
 				/>
 			</div>
 		);
